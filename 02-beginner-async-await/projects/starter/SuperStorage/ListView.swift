@@ -93,6 +93,19 @@ struct ListView: View {
       }, message: {
         Text(lastErrorMessage)
       })
+      .task {
+        guard files.isEmpty else { return }
+        
+        do {
+          async let files = try model.availableFiles()
+          async let status = try model.status()
+          let (filesResult, statusResult) = try await (files, status)
+          self.files = filesResult
+          self.status = statusResult
+        } catch {
+          lastErrorMessage = error.localizedDescription
+        }
+      }
     }
   }
 }
